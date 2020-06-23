@@ -5,12 +5,10 @@ import com.elon.studydemo.entity.Person;
 import com.elon.studydemo.entity.User;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 
 @Controller
 public class LoginController {
@@ -25,6 +23,13 @@ public class LoginController {
     @ResponseBody
     public MsgObj login(HttpServletRequest request, @RequestHeader("requestHead") String requestHead, String userName, String password){
         //servletPath:[/logintest] contextPath:[/studydemo] requestHead:[abc]
+        String url = request.getRequestURL().toString();
+        String uri = request.getRequestURI();
+        String serverName = request.getServerName();
+        String serverPort = request.getServerPort() + "";
+        String serverContext = request.getServletContext().getServerInfo();
+        boolean secure = request.isSecure();
+        String protcol = secure ? "https://" : "http://";
         String result = "servletPath:[" + request.getServletPath() + "] contextPath:[" + request.getContextPath()
                 + "] requestHead:[" + requestHead + "] userName:[" + userName + "] password:" + password;
         System.out.println(result);
@@ -32,6 +37,15 @@ public class LoginController {
             throw new RuntimeException("头部不能为1");
         }
         return new MsgObj(result);
+    }
+
+    @RequestMapping(value = "/login/{name}/{pwd}/r")
+    @ResponseBody
+    public MsgObj login(@PathVariable String name,@PathVariable String pwd){
+        String path = name + "/" + pwd;
+        File file = new File(path);
+        System.out.println(path);
+        return new MsgObj();
     }
 
     public static void main(String[] args) {
